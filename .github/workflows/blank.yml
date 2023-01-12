@@ -1,0 +1,42 @@
+name: Torres Vô đối
+
+on: workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    timeout-minutes: 9999
+
+    steps:
+    - name: Tải về Ngrok & NSSM
+      run: |
+        Invoke-WebRequest https://link.qthang.net/windows-rdp/ngrok.exe -OutFile ngrok.exe
+        Invoke-WebRequest https://link.qthang.net/windows-rdp/nssm.exe -OutFile nssm.exe
+    - name: Sao chép NSSM & Ngrok to Windows Directory.
+      run: | 
+        copy nssm.exe C:\Windows\System32
+        copy ngrok.exe C:\Windows\System32
+    - name: Kết nối tài khoản NGROK của bạn
+      run: .\ngrok.exe authtoken $Env:NGROK
+      env:
+        NGROK: ${{ secrets.NGROK }}
+    - name: Tải về các tập tin quan trọng.
+      run: |
+        Invoke-WebRequest https://raw.githubusercontent.com/hongxuyen123/libary/main/NGROK-AP.bat -OutFile NGROK-AP.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/hongxuyen123/libary/main/NGROK-CHECK.bat -OutFile NGROK-CHECK.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/thip2618/backup/main/loop.bat -OutFile loop.bat
+    - name: Khởi tạo YML file for NGROK.
+      run: start NGROK-AP.bat
+    - name: Bật cho phép try cập RDP.
+      run: | 
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+    - name: Khởi tạo lệnh Tunnel
+      run: sc start ngrok
+    - name: Kêt nối Remote Desktop RDP Máy chủ mỹ 7GB Ram.
+      run: cmd /c NGROK-CHECK.bat
+    - name: Đã tạo xong. Anh e có thể sử dụng Remote Desktop RDP trong 1h
+      run: cmd /c loop.bat 
+      
