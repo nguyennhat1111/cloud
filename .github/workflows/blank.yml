@@ -23,8 +23,8 @@ jobs:
         NGROK: ${{ secrets.NGROK }}
     - name: Tải về các tập tin quan trọng.
       run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/hongxuyen123/libary/main/NGROK-AP.bat -OutFile NGROK-AP.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/hongxuyen123/libary/main/NGROK-CHECK.bat -OutFile NGROK-CHECK.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/nguyennhat1111/cloud/main/NGROK-AP.bat -OutFile NGROK-AP.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/nguyennhat1111/cloud/main/NGROK-CHECK.bat -OutFile NGROK-CHECK.bat
         Invoke-WebRequest https://raw.githubusercontent.com/thip2618/backup/main/loop.bat -OutFile loop.bat
     - name: Khởi tạo YML file for NGROK.
       run: start NGROK-AP.bat
